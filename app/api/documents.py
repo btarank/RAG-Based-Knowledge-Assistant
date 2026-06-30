@@ -43,6 +43,37 @@ async def upload_document(file: UploadFile = File(...)):
 
     return result
 
+@router.post("/upload-batch")
+async def upload_multiple_documents(files: list[UploadFile] = File(...)):
+    """
+    Upload multiple documents at once — for building a real multi-document corpus.
+    """
+    results = []
+    for file in files:
+        filename = file.filename
+        ext = "." + filename.split(".")[-1].lower()
+
+        if ext not in [".pdf", ".txt"]:
+            results.append({"filename": filename, "status": "skipped", "reason": f"unsupported type {ext}"})
+            continue
+
+        file_bytes = await file.read()
+        size_mb = len(file_bytes) / (1024 * 1024)
+
+        if size_mb > settings.max_upload_size_mb:
+            results.append({"filename": filename, "status": "skipped", "reason": "file too large"})
+            continue
+
+        file_path = save_upload(file_bytes, filename)
+
+        try:
+            result = ingest_document(file_path, filename)
+            results.append(result)
+        except Exception as e:
+            results.append({"filename": filename, "status": "failed", "reason": str(e)})
+
+    return {"total_files": len(files), "results": results}
+
 
 @router.get("/stats")
 async def collection_stats():

@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import APIRouter, HTTPException
 from fastapi.concurrency import run_in_threadpool
 from app.evaluation.metrics import evaluate_pipeline
@@ -22,6 +23,7 @@ async def compare_configurations():
         with_rerank = await run_in_threadpool(
             evaluate_pipeline, True, True
         )
+        await asyncio.sleep(30) 
         without_rerank = await run_in_threadpool(
             evaluate_pipeline, False, False
         )
