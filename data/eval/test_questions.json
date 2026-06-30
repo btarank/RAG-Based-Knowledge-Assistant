@@ -1,0 +1,82 @@
+[
+  {
+    "question": "What is the main topic of this document?",
+    "ground_truth": "The document studies the characters from 'Deep Water' and 'On the Face of It' and connects their experiences with real-life examples of resilience, courage, and overcoming challenges."
+  },
+  {
+    "question": "Which two literary works are discussed in this project?",
+    "ground_truth": "The project discusses 'Deep Water' by William O. Douglas and 'On the Face of It' by Susan Hill."
+  },
+  {
+    "question": "Who is the author of Deep Water?",
+    "ground_truth": "William O. Douglas."
+  },
+  {
+    "question": "Who wrote On the Face of It?",
+    "ground_truth": "Susan Hill."
+  },
+  {
+    "question": "Why did William O. Douglas develop a fear of water?",
+    "ground_truth": "He developed a fear of water after nearly drowning in a swimming pool as a child."
+  },
+  {
+    "question": "How did William O. Douglas overcome his fear?",
+    "ground_truth": "He overcame his fear through professional swimming instruction, regular practice, determination, and persistence."
+  },
+  {
+    "question": "Who is Derry?",
+    "ground_truth": "Derry is a fourteen-year-old boy with a burnt face who initially feels isolated and insecure because of his appearance."
+  },
+  {
+    "question": "How did Mr. Lamb help Derry?",
+    "ground_truth": "Mr. Lamb encouraged Derry to accept himself, ignore other people's opinions, and live confidently."
+  },
+  {
+    "question": "What are the four common themes discussed in both stories?",
+    "ground_truth": "Fear, disability and social attitudes, resilience, and the importance of positive guidance."
+  },
+  {
+    "question": "What is resilience according to the document?",
+    "ground_truth": "Resilience is the ability to recover from difficult situations, adapt to challenges, stay hopeful, and keep moving forward despite obstacles."
+  },
+  {
+    "question": "What is aquaphobia?",
+    "ground_truth": "Aquaphobia is the fear of water."
+  },
+  {
+    "question": "What is glossophobia?",
+    "ground_truth": "Glossophobia is the fear of public speaking or stage fear."
+  },
+  {
+    "question": "Who is Ranjot Singh and what challenge did he face?",
+    "ground_truth": "Ranjot Singh is the author's cousin brother who struggled with stage fear, also known as glossophobia."
+  },
+  {
+    "question": "How did Ranjot Singh overcome stage fear?",
+    "ground_truth": "He practised speaking every day, received encouragement from his family, started with small audiences, and gradually became confident enough to participate in debates and school events."
+  },
+  {
+    "question": "What health challenges did Manveer Kaur face?",
+    "ground_truth": "Manveer Kaur has Type 1 Diabetes and kidney problems but remains positive and continues treatment with family support."
+  },
+  {
+    "question": "What challenge did Kulvinder Kaur overcome?",
+    "ground_truth": "Kulvinder Kaur overcame financial difficulties after her husband's death through hard work, determination, and caring for her family."
+  },
+  {
+    "question": "According to the document, what helps people build self-confidence?",
+    "ground_truth": "Regular practice, learning from mistakes, setting achievable goals, seeking help from teachers or mentors, and maintaining positive thinking."
+  },
+  {
+    "question": "What support system helped William O. Douglas?",
+    "ground_truth": "A swimming instructor and his own determination helped William O. Douglas overcome his fear."
+  },
+  {
+    "question": "What message connects literature and real life in the project?",
+    "ground_truth": "The project shows that the struggles and resilience of literary characters are similar to real-life experiences, demonstrating that courage, determination, and support help people overcome challenges."
+  },
+  {
+    "question": "What is the overall conclusion of the project?",
+    "ground_truth": "The overall conclusion is that resilience, courage, positive thinking, determination, and support from others enable people to overcome fear and life's challenges."
+  }
+]
