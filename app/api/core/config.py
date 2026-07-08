@@ -1,6 +1,6 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field
-
+app_api_key: str = Field(default="", env="APP_API_KEY")
 class Settings(BaseSettings):
     # LLM
     llm_provider: str = Field(default="groq", env="LLM_PROVIDER")

@@ -74,6 +74,7 @@ def evaluate_pipeline(use_rerank: bool = True, use_rewrite: bool = True) -> dict
     faithfulness_scores = []
     relevance_scores = []
     context_scores = []
+    failed_questions = []
 
     print(f"Running evaluation (rerank={use_rerank}, rewrite={use_rewrite}) on {len(test_questions)} questions...")
 
@@ -81,31 +82,47 @@ def evaluate_pipeline(use_rerank: bool = True, use_rewrite: bool = True) -> dict
         question = item["question"]
         print(f"[{i+1}/{len(test_questions)}] {question[:60]}...")
 
-        result = answer_query(query=question, use_rewrite=use_rewrite, use_rerank=use_rerank)
-        answer = result["answer"]
+        try:
+            result = answer_query(
+                query=question,
+                use_rewrite=use_rewrite,
+                use_rerank=use_rerank
+            )
+            answer = result["answer"]
 
-        retrieve_k = 15 if use_rerank else 5
-        raw_results = hybrid_search(question, top_k=retrieve_k)
-        if use_rerank:
-            raw_results = rerank_fn(question, raw_results, top_k=5)
-        else:
-            raw_results = raw_results[:5]
+            retrieve_k = 15 if use_rerank else 5
+            raw_results = hybrid_search(question, top_k=retrieve_k)
+            if use_rerank:
+                raw_results = rerank_fn(question, raw_results, top_k=5)
+            else:
+                raw_results = raw_results[:5]
 
-        context = "\n\n".join([r.text for r in raw_results]) or "No context retrieved."
+            context = "\n\n".join([r.text for r in raw_results]) or "No context retrieved."
 
-        f_score = _score_faithfulness(answer, context)
-        r_score = _score_relevance(question, answer)
-        c_score = _score_context_relevance(question, context)
+            f_score = _score_faithfulness(answer, context)
+            r_score = _score_relevance(question, answer)
+            c_score = _score_context_relevance(question, context)
 
-        faithfulness_scores.append(f_score)
-        relevance_scores.append(r_score)
-        context_scores.append(c_score)
+            faithfulness_scores.append(f_score)
+            relevance_scores.append(r_score)
+            context_scores.append(c_score)
 
-        print(f"  faithfulness={f_score:.2f}  relevance={r_score:.2f}  context={c_score:.2f}")
+            print(f"  faithfulness={f_score:.2f}  relevance={r_score:.2f}  context={c_score:.2f}")
+
+        except Exception as e:
+            print(f"  FAILED: {e}")
+            print(traceback.format_exc())
+            failed_questions.append({"question": question, "error": str(e)})
+            continue  # skip this question, continue with next
+
+    if not faithfulness_scores:
+        raise ValueError("All questions failed — check your Groq key and document upload.")
 
     summary = {
         "config": {"use_rerank": use_rerank, "use_rewrite": use_rewrite},
         "num_questions": len(test_questions),
+        "num_failed": len(failed_questions),
+        "failed_questions": failed_questions,
         "scores": {
             "faithfulness": round(float(np.mean(faithfulness_scores)), 4),
             "answer_relevancy": round(float(np.mean(relevance_scores)), 4),
@@ -117,5 +134,27 @@ def evaluate_pipeline(use_rerank: bool = True, use_rewrite: bool = True) -> dict
     with open(RESULTS_PATH, "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
 
-    print("Evaluation complete:", summary["scores"])
+    print(f"Evaluation complete: {summary['scores']}")
+    if failed_questions:
+        print(f"Warning: {len(failed_questions)} questions failed — see results file for details.")
+
     return summary
+
+def _score_ground_truth_match(question: str, answer: str, ground_truth: str) -> float:
+    """
+    Compares the generated answer against the known correct answer.
+    This catches cases where the system sounds confident but is wrong.
+    """
+    prompt = f"""Question: {question}
+
+Correct answer (ground truth): {ground_truth}
+
+System's answer: {answer}
+
+How well does the System's answer match the Correct answer in terms of factual content?
+Reply with ONLY a number between 0 and 1, where:
+1.0 = answer is factually correct and complete
+0.5 = answer is partially correct or missing key points
+0.0 = answer is wrong, irrelevant, or contradicts the correct answer
+No explanation, just the number."""
+    return _parse_score(_safe_llm_call(prompt))

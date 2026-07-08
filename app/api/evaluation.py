@@ -1,3 +1,4 @@
+import traceback
 import asyncio
 from fastapi import APIRouter, HTTPException
 from fastapi.concurrency import run_in_threadpool
@@ -9,11 +10,11 @@ router = APIRouter(prefix="/evaluate", tags=["Evaluation"])
 @router.post("/run")
 async def run_evaluation(use_rerank: bool = True, use_rewrite: bool = True):
     try:
-        result = await run_in_threadpool(
-            evaluate_pipeline, use_rerank, use_rewrite
-        )
+        result = await run_in_threadpool(evaluate_pipeline, use_rerank, use_rewrite)
         return result
     except Exception as e:
+        error_detail = traceback.format_exc()
+        print(f"EVALUATION ERROR:\n{error_detail}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

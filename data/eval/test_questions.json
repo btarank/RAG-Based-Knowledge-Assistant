@@ -4,8 +4,8 @@
     "ground_truth": "C provides speed and control, critical for HPC applications"
   },
   {
-    "question": "What does malloc do ?",
-    "ground_truth": " Allocate memory during runtime' by Susan Hill."
+    "question": "What commands are used to navigate the Linux file system?",
+    "ground_truth": "ls,cd and pwd"
   },
   {
     "question": "what is a COontractive Autoencoder ?",
@@ -16,8 +16,8 @@
     "ground_truth": "An iterative optimization algorithm used to minimize the loss function during the training of neural networks."
   },
   {
-    "question": "What are Package Managers ?",
-    "ground_truth": "Package managers are tools that automate the process of installing, upgrading, configuring, and  removing software packages"
+    "question": "What is shell scripting ?",
+    "ground_truth": "Shell scripting is a method to automate tasks in Linux environments using a sequence of shell commands written in a file. "
   },
   {
     "question": "What primamry advantages does Virtual Memory provide?",
@@ -28,7 +28,7 @@
     "ground_truth": "Priority-based scheduling is a method used by operating systems or computing environments to determine the order in which processes are executed. "
   },
   {
-    "question": "What is Flynn's Taxonomy ?",
-    "ground_truth": "Flynns Taxonomy classifies computer architectures based on the number of instruction and data streams."
+    "question": "What is RMSProp ?",
+    "ground_truth": "RMSProp, which stands for Root Mean Square Propagation, is an adaptive learning rate optimization algorithm designed to address some of the issues encountered with the stochastic gradient descent (SGD) method in training deep neural networks."
   }
-]
+  ]

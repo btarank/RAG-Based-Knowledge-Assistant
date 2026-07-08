@@ -1,10 +1,15 @@
-from fastapi import FastAPI
+import time
+from app.api.core.logging_config import logger
+from fastapi import FastAPI , Request
+
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.core.config import settings
 from app.api.documents import router as documents_router
 from app.api.search import router as search_router
 from app.api.query import router as query_router
 from app.api.evaluation import router as evaluation_router
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 app = FastAPI(
     title="RAG Assistant",
     description="Production-grade RAG system — free deployable stack",
@@ -18,10 +23,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = round(time.time() - start_time, 3)
+
+    logger.info(
+        f"{request.method} {request.url.path} | "
+        f"status={response.status_code} | {duration}s"
+    )
+    return response
+
+
 app.include_router(documents_router)
 app.include_router(search_router)
 app.include_router(query_router)
 app.include_router(evaluation_router)  
+
 @app.get("/")
 async def root():
     return {
@@ -54,3 +74,30 @@ async def test_embeddings():
         "embedding_dim": len(vector),
         "status": "embeddings working"
     }
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info("RAG Assistant starting up...")
+    logger.info(f"LLM: {settings.llm_provider} / {settings.llm_model}")
+    logger.info(f"Vector DB: {settings.vector_db}")
+    logger.info(f"Embedding model: {settings.embedding_model}")
+
+
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    logger.warning(f"Validation error on {request.url.path}: {exc.errors()}")
+    return JSONResponse(
+        status_code=422,
+        content={"error": "Invalid request data", "details": exc.errors()}
+    )
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error on {request.url.path}: {str(exc)}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"error": "Internal server error. Please try again."}
+    )    
