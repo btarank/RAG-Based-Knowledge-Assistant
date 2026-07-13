@@ -6,8 +6,9 @@ __pycache__/
 .gitignore
 data/uploads/*
 data/processed/*
+data/eval/eval_results.json
 *.faiss
 *.pkl
+*.log
 README.md
 .pytest_cache/
-*.log
