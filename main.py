@@ -10,6 +10,9 @@ from app.api.query import router as query_router
 from app.api.evaluation import router as evaluation_router
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.staticfiles import StaticFiles
+
+
 app = FastAPI(
     title="RAG Assistant",
     description="Production-grade RAG system — free deployable stack",
@@ -41,7 +44,7 @@ app.include_router(documents_router)
 app.include_router(search_router)
 app.include_router(query_router)
 app.include_router(evaluation_router)  
-
+app.mount("/app", StaticFiles(directory="frontend", html=True), name="frontend")
 @app.get("/")
 async def root():
     return {
