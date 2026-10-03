@@ -4,7 +4,7 @@ app_api_key: str = Field(default="", env="APP_API_KEY")
 class Settings(BaseSettings):
     # LLM
     llm_provider: str = Field(default="groq", env="LLM_PROVIDER")
-    llm_model: str = Field(default="llama-3.1-8b-instant", env="LLM_MODEL")
+    llm_model: str = Field(default="llama-3.3-70b-versatile", env="LLM_MODEL")
     groq_api_key: str = Field(default="", env="GROQ_API_KEY")
 
     # Embeddings
