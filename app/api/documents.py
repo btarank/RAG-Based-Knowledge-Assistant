@@ -106,4 +106,29 @@ async def peek_chunks(limit: int = 10):
             "metadata": data["metadatas"][i]
         }
         for i in range(len(data["ids"]))
-    ]    
+    ] 
+
+@router.get("/list")
+async def list_documents():
+    """Return all unique documents currently stored in ChromaDB."""
+    from app.ingestion.embedder import get_chroma_collection
+    collection = get_chroma_collection()
+    data = collection.get()
+
+    if not data["ids"]:
+        return {"documents": []}
+
+    # Get unique filenames with their page counts
+    doc_map = {}
+    for metadata in data["metadatas"]:
+        source = metadata.get("source_file", "unknown")
+        total_pages = metadata.get("total_pages", 0)
+        if source not in doc_map:
+            doc_map[source] = total_pages
+
+    documents = [
+        {"name": name, "pages": pages}
+        for name, pages in doc_map.items()
+    ]
+
+    return {"documents": documents}   

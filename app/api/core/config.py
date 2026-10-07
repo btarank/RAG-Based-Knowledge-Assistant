@@ -1,10 +1,14 @@
 from pydantic_settings import BaseSettings
 from pydantic import Field
-app_api_key: str = Field(default="", env="APP_API_KEY")
+from pathlib import Path
+
+# Find .env relative to this file's location going up to project root
+ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
+
 class Settings(BaseSettings):
     # LLM
     llm_provider: str = Field(default="groq", env="LLM_PROVIDER")
-    llm_model: str = Field(default="llama-3.3-70b-versatile", env="LLM_MODEL")
+    llm_model: str = Field(default="openai/gpt-oss-20b", env="LLM_MODEL")
     groq_api_key: str = Field(default="", env="GROQ_API_KEY")
 
     # Embeddings
@@ -32,9 +36,10 @@ class Settings(BaseSettings):
     # App
     app_env: str = Field(default="development", env="APP_ENV")
     max_upload_size_mb: int = Field(default=50, env="MAX_UPLOAD_SIZE_MB")
+    app_api_key: str = Field(default="", env="APP_API_KEY")
 
     class Config:
-        env_file = ".env"
+        env_file = str(ENV_FILE)
         extra = "ignore"
 
 settings = Settings()
